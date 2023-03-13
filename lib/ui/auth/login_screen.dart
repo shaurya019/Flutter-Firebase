@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_firebase/ui/auth/signup_screen.dart';
 import 'package:flutter_firebase/widgets/round_button.dart';
+
+import '../../utils/utils.dart';
+import '../firebase_database/post_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -11,14 +15,43 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool loading = false ;
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final _auth = FirebaseAuth.instance ;
+
+
   @override
-  void dispose(){
+  void dispose() {
+    // TODO: implement dispose
     super.dispose();
     emailController.dispose();
     passwordController.dispose();
+
+  }
+
+  void login(){
+    setState(() {
+      loading = true ;
+    });
+    _auth.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text.toString()).then((value){
+      Utils().toastMessage(value.user!.email.toString());
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => PostScreen())
+      );
+      setState(() {
+        loading = false ;
+      });
+    }).onError((error, stackTrace){
+      debugPrint(error.toString());
+      Utils().toastMessage(error.toString());
+      setState(() {
+        loading = false ;
+      });
+    });
   }
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -78,10 +111,10 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 50,),
               RoundButton(
                 title: 'Login',
-                // loading: loading,
+                loading: loading,
                 onTap: (){
                   if(_formKey.currentState!.validate()){
-                    // login();
+                    login();
                   }
                 },
               ),
