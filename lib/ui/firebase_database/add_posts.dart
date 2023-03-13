@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/utils.dart';
@@ -15,7 +16,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   final postController = TextEditingController();
   bool loading = false;
 
-  // final databaseRef = FirebaseDatabase.instance.ref('Post');
+  final databaseRef = FirebaseDatabase.instance.ref('Post');
 
   @override
   Widget build(BuildContext context) {
