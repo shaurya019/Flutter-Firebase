@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase/ui/auth/login_screen.dart';
 import 'package:flutter_firebase/ui/firebase_database/add_posts.dart';
@@ -14,6 +16,7 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   final auth = FirebaseAuth.instance;
+  final ref = FirebaseDatabase.instance.ref('Post');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,6 +35,19 @@ class _PostScreenState extends State<PostScreen> {
             ),
           ],
         ),
+      body: Column(
+        children: [
+          Expanded(child: FirebaseAnimatedList(
+            query: ref,
+            defaultChild: Text('Loading'),
+            itemBuilder: (context,snapshot,animation,index){
+              return ListTile(
+                title: Text(snapshot.child('title').value.toString()),
+              )
+            }
+          ))
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           Navigator.push(context, MaterialPageRoute(builder: (context) => AddPostScreen()));
