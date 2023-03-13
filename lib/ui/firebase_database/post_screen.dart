@@ -43,7 +43,8 @@ class _PostScreenState extends State<PostScreen> {
             itemBuilder: (context,snapshot,animation,index){
               return ListTile(
                 title: Text(snapshot.child('title').value.toString()),
-              )
+                subtitle: Text(snapshot.child('id').value.toString()),
+              );
             }
           ))
         ],
