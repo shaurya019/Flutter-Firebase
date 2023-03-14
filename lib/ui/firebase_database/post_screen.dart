@@ -17,10 +17,13 @@ class PostScreen extends StatefulWidget {
 class _PostScreenState extends State<PostScreen> {
   final auth = FirebaseAuth.instance;
   final ref = FirebaseDatabase.instance.ref('Post');
+  final searchfilter = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
+        centerTitle: true,
         title: Text('Post Screen'),
           actions: [
             IconButton(
@@ -37,15 +40,41 @@ class _PostScreenState extends State<PostScreen> {
         ),
       body: Column(
         children: [
+          SizedBox(height: 10,),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: TextFormField(
+              controller: searchfilter,
+              decoration: InputDecoration(
+                hintText: 'Search',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (String value){
+                setState(() {
+
+                });
+              },
+            ),
+          ),
           Expanded(child: FirebaseAnimatedList(
             query: ref,
             defaultChild: Text('Loading'),
             itemBuilder: (context,snapshot,animation,index){
-              return ListTile(
-                title: Text(snapshot.child('title').value.toString()),
-                subtitle: Text(snapshot.child('id').value.toString()),
-              );
-            }
+              final title = snapshot.child('title').value.toString();
+              if(searchfilter.text.isEmpty){
+                return ListTile(
+                  title: Text(snapshot.child('title').value.toString()),
+                  subtitle: Text(snapshot.child('id').value.toString()),
+                );
+              }else if(title.toLowerCase().contains(searchfilter.text.toLowerCase().toLowerCase())){
+                return ListTile(
+                  title: Text(snapshot.child('title').value.toString()),
+                  subtitle: Text(snapshot.child('id').value.toString()),
+                );
+              } else {
+                      return Container();
+                    }
+                  }
           ))
         ],
       ),
